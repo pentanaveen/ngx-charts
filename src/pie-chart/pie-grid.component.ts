@@ -133,7 +133,7 @@ export class PieGridComponent extends BaseChartComponent {
   }
 
   defaultTooltipText({ data }): string {
-    const label = trimLabel(formatLabel(data.name));
+    const label = data.name;
     const val = data.value.toLocaleString();
     return `
       <span class="tooltip-label">${label}</span>
