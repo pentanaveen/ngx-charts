@@ -43,17 +43,6 @@ import { DataItem } from '../models/chart-data.model';
             (activate)="onActivate($event)"
             (deactivate)="onDeactivate($event)"
           />
-<svg:text
-            *ngIf="animations"
-            class="label"
-            dy="1.23em"
-            x="0"
-            [attr.y]="series.outerRadius"
-            text-anchor="middle"
-            ngx-charts-count-up
-            [countTo]="series.total"
-            [countPrefix]="label + ': '"
-          ></svg:text>
           <svg:text
             *ngIf="animations"
             class="label percent-label"
@@ -68,7 +57,21 @@ import { DataItem } from '../models/chart-data.model';
           <svg:text *ngIf="!animations" class="label percent-label" dy="-0.5em" x="0" y="5" text-anchor="middle">
             {{ series.percent.toLocaleString() }}
           </svg:text>
-<svg:text
+          <svg:text class="label" dy="0.5em" x="0" y="5" text-anchor="middle">
+            {{ series.label }}
+          </svg:text>
+          <svg:text
+            *ngIf="animations"
+            class="label"
+            dy="1.23em"
+            x="0"
+            [attr.y]="series.outerRadius"
+            text-anchor="middle"
+            ngx-charts-count-up
+            [countTo]="series.total"
+            [countPrefix]="label + ': '"
+          ></svg:text>
+          <svg:text
             *ngIf="!animations"
             class="label"
             dy="1.23em"
@@ -76,12 +79,7 @@ import { DataItem } from '../models/chart-data.model';
             [attr.y]="series.outerRadius"
             text-anchor="middle"
           >
-            {{ series.total.toLocaleString() }}
-          </svg:text>
-          
-          
-          <svg:text class="label" dy="0.5em" x="0" y="5" text-anchor="middle">
-            {{ series.label }}
+            {{ label }}: {{ series.total.toLocaleString() }}
           </svg:text>
         </svg:g>
       </svg:g>
