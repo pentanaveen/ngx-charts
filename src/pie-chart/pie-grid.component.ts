@@ -54,7 +54,7 @@ const CURRENCY_SYMBOL = '₹';
             [countTo]="series.percent"
             [countSuffix]="'%'"
             text-anchor="middle"
-          ></svg:text>
+          >{{ series.percent.toLocaleString() }}</svg:text>
 
           <svg:text *ngIf="!animations" class="label percent-label" dy="-0.5em" x="0" y="5" text-anchor="middle">
             {{ series.percent.toLocaleString() }}
@@ -69,9 +69,7 @@ const CURRENCY_SYMBOL = '₹';
           <svg:text
             *ngIf="!animations"
             class="label"
-            dy="1.23em"
-            x="0"
-            [attr.y]="series.outerRadius"
+            dy="0.5em" x="0" y="5"
             text-anchor="middle"
           >
             {{ convertToRupee(series.total) }}
