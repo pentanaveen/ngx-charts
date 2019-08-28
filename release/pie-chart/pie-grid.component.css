@@ -4,3 +4,7 @@
 .pie-grid .percent-label {
   font-size: 16px;
   font-weight: 400; }
+
+.pie-grid .label-text {
+  font-size: 12px;
+  text-align: center; }

@@ -31,4 +31,5 @@ export declare class PieGridComponent extends BaseChartComponent {
     setColors(): void;
     onActivate(item: any, fromLegend?: boolean): void;
     onDeactivate(item: any, fromLegend?: boolean): void;
+    convertToRupee(value: any): any;
 }

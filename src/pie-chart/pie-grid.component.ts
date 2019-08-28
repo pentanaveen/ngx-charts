@@ -18,6 +18,7 @@ import { trimLabel } from '../common/trim-label.helper';
 import { gridLayout } from '../common/grid-layout.helper';
 import { formatLabel } from '../common/label.helper';
 import { DataItem } from '../models/chart-data.model';
+const CURRENCY_SYMBOL = '₹';
 
 @Component({
   selector: 'ngx-charts-pie-grid',
@@ -54,23 +55,17 @@ import { DataItem } from '../models/chart-data.model';
             [countSuffix]="'%'"
             text-anchor="middle"
           ></svg:text>
+
           <svg:text *ngIf="!animations" class="label percent-label" dy="-0.5em" x="0" y="5" text-anchor="middle">
             {{ series.percent.toLocaleString() }}
           </svg:text>
-          <svg:text class="label" dy="0.5em" x="0" y="5" text-anchor="middle">
-            {{ series.label }}
-          </svg:text>
+
           <svg:text
             *ngIf="animations"
             class="label"
-            dy="1.23em"
-            x="0"
-            [attr.y]="series.outerRadius"
+            dy="0.5em" x="0" y="5"
             text-anchor="middle"
-            ngx-charts-count-up
-            [countTo]="series.total"
-            [countPrefix]="label + ': '"
-          ></svg:text>
+          >{{ convertToRupee(series.total) }}</svg:text>
           <svg:text
             *ngIf="!animations"
             class="label"
@@ -79,8 +74,13 @@ import { DataItem } from '../models/chart-data.model';
             [attr.y]="series.outerRadius"
             text-anchor="middle"
           >
-            {{ label }}: {{ series.total.toLocaleString() }}
+            {{ convertToRupee(series.total) }}
           </svg:text>
+
+
+          <svg:foreignObject text-anchor="middle" x="-80" y="90" dy="1.23em" width="160" height="50">
+            <xhtml:p class="label-text">{{ series.label }}</xhtml:p>
+          </svg:foreignObject>
         </svg:g>
       </svg:g>
     </ngx-charts-chart>
@@ -152,7 +152,7 @@ export class PieGridComponent extends BaseChartComponent {
       const baselineLabelHeight = 20;
       const padding = 10;
       const name = d.data.name;
-      const label = formatLabel(name);
+      const label = (name);
       const value = d.data.value;
       const radius = min([d.width - padding, d.height - baselineLabelHeight]) / 2 - 5;
       const innerRadius = radius * 0.9;
@@ -176,7 +176,7 @@ export class PieGridComponent extends BaseChartComponent {
         innerRadius,
         outerRadius: radius,
         name,
-        label: trimLabel(label),
+        label: (label),
         total: value,
         value,
         percent: format('.1%')(d.data.percent),
@@ -243,5 +243,31 @@ export class PieGridComponent extends BaseChartComponent {
     this.activeEntries = [...this.activeEntries];
 
     this.deactivate.emit({ value: item, entries: this.activeEntries });
+  }
+
+  convertToRupee(value: any): any {
+    if (!isNaN(value)) {
+      let roundedValue = value.toString();
+      if (value % 1 !== 0) {
+        roundedValue = value.toFixed(2);
+      }
+      const result = roundedValue.split('.');
+      let lastThree = result[0].substring(result[0].length - 3);
+      const otherNumbers = result[0].substring(0, result[0].length - 3);
+      if (otherNumbers != '') {
+        lastThree = ',' + lastThree;
+      }
+      let output = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + lastThree;
+      if (result.length > 1) {
+        output += '.' + result[1];
+      }
+      if (output === '0') {
+        return `${CURRENCY_SYMBOL} 0`;
+      } else {
+        return CURRENCY_SYMBOL + output;
+      }
+    } else {
+      return `${CURRENCY_SYMBOL} 0`;
+    }
   }
 }

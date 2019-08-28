@@ -26,9 +26,8 @@ import { format } from 'd3-format';
 import { calculateViewDimensions } from '../common/view-dimensions.helper';
 import { ColorHelper } from '../common/color.helper';
 import { BaseChartComponent } from '../common/base-chart.component';
-import { trimLabel } from '../common/trim-label.helper';
 import { gridLayout } from '../common/grid-layout.helper';
-import { formatLabel } from '../common/label.helper';
+var CURRENCY_SYMBOL = '₹';
 var PieGridComponent = /** @class */ (function (_super) {
     __extends(PieGridComponent, _super);
     function PieGridComponent() {
@@ -73,7 +72,7 @@ var PieGridComponent = /** @class */ (function (_super) {
             var baselineLabelHeight = 20;
             var padding = 10;
             var name = d.data.name;
-            var label = formatLabel(name);
+            var label = (name);
             var value = d.data.value;
             var radius = min([d.width - padding, d.height - baselineLabelHeight]) / 2 - 5;
             var innerRadius = radius * 0.9;
@@ -95,7 +94,7 @@ var PieGridComponent = /** @class */ (function (_super) {
                 innerRadius: innerRadius,
                 outerRadius: radius,
                 name: name,
-                label: trimLabel(label),
+                label: (label),
                 total: value,
                 value: value,
                 percent: format('.1%')(d.data.percent),
@@ -157,6 +156,33 @@ var PieGridComponent = /** @class */ (function (_super) {
         this.activeEntries = this.activeEntries.slice();
         this.deactivate.emit({ value: item, entries: this.activeEntries });
     };
+    PieGridComponent.prototype.convertToRupee = function (value) {
+        if (!isNaN(value)) {
+            var roundedValue = value.toString();
+            if (value % 1 !== 0) {
+                roundedValue = value.toFixed(2);
+            }
+            var result = roundedValue.split('.');
+            var lastThree = result[0].substring(result[0].length - 3);
+            var otherNumbers = result[0].substring(0, result[0].length - 3);
+            if (otherNumbers != '') {
+                lastThree = ',' + lastThree;
+            }
+            var output = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + lastThree;
+            if (result.length > 1) {
+                output += '.' + result[1];
+            }
+            if (output === '0') {
+                return CURRENCY_SYMBOL + " 0";
+            }
+            else {
+                return CURRENCY_SYMBOL + output;
+            }
+        }
+        else {
+            return CURRENCY_SYMBOL + " 0";
+        }
+    };
     __decorate([
         Input(),
         __metadata("design:type", Number)
@@ -196,7 +222,7 @@ var PieGridComponent = /** @class */ (function (_super) {
     PieGridComponent = __decorate([
         Component({
             selector: 'ngx-charts-pie-grid',
-            template: "\n    <ngx-charts-chart [view]=\"[width, height]\" [showLegend]=\"false\" [animations]=\"animations\">\n      <svg:g [attr.transform]=\"transform\" class=\"pie-grid chart\">\n        <svg:g *ngFor=\"let series of series\" class=\"pie-grid-item\" [attr.transform]=\"series.transform\">\n          <svg:g\n            ngx-charts-pie-grid-series\n            [colors]=\"series.colors\"\n            [data]=\"series.data\"\n            [innerRadius]=\"series.innerRadius\"\n            [outerRadius]=\"series.outerRadius\"\n            [animations]=\"animations\"\n            (select)=\"onClick($event)\"\n            ngx-tooltip\n            [tooltipDisabled]=\"tooltipDisabled\"\n            [tooltipPlacement]=\"'top'\"\n            [tooltipType]=\"'tooltip'\"\n            [tooltipTitle]=\"tooltipTemplate ? undefined : tooltipText({ data: series })\"\n            [tooltipTemplate]=\"tooltipTemplate\"\n            [tooltipContext]=\"series.data[0].data\"\n            (activate)=\"onActivate($event)\"\n            (deactivate)=\"onDeactivate($event)\"\n          />\n          <svg:text\n            *ngIf=\"animations\"\n            class=\"label percent-label\"\n            dy=\"-0.5em\"\n            x=\"0\"\n            y=\"5\"\n            ngx-charts-count-up\n            [countTo]=\"series.percent\"\n            [countSuffix]=\"'%'\"\n            text-anchor=\"middle\"\n          ></svg:text>\n          <svg:text *ngIf=\"!animations\" class=\"label percent-label\" dy=\"-0.5em\" x=\"0\" y=\"5\" text-anchor=\"middle\">\n            {{ series.percent.toLocaleString() }}\n          </svg:text>\n          <svg:text class=\"label\" dy=\"0.5em\" x=\"0\" y=\"5\" text-anchor=\"middle\">\n            {{ series.label }}\n          </svg:text>\n          <svg:text\n            *ngIf=\"animations\"\n            class=\"label\"\n            dy=\"1.23em\"\n            x=\"0\"\n            [attr.y]=\"series.outerRadius\"\n            text-anchor=\"middle\"\n            ngx-charts-count-up\n            [countTo]=\"series.total\"\n            [countPrefix]=\"label + ': '\"\n          ></svg:text>\n          <svg:text\n            *ngIf=\"!animations\"\n            class=\"label\"\n            dy=\"1.23em\"\n            x=\"0\"\n            [attr.y]=\"series.outerRadius\"\n            text-anchor=\"middle\"\n          >\n            {{ label }}: {{ series.total.toLocaleString() }}\n          </svg:text>\n        </svg:g>\n      </svg:g>\n    </ngx-charts-chart>\n  ",
+            template: "\n    <ngx-charts-chart [view]=\"[width, height]\" [showLegend]=\"false\" [animations]=\"animations\">\n      <svg:g [attr.transform]=\"transform\" class=\"pie-grid chart\">\n        <svg:g *ngFor=\"let series of series\" class=\"pie-grid-item\" [attr.transform]=\"series.transform\">\n          <svg:g\n            ngx-charts-pie-grid-series\n            [colors]=\"series.colors\"\n            [data]=\"series.data\"\n            [innerRadius]=\"series.innerRadius\"\n            [outerRadius]=\"series.outerRadius\"\n            [animations]=\"animations\"\n            (select)=\"onClick($event)\"\n            ngx-tooltip\n            [tooltipDisabled]=\"tooltipDisabled\"\n            [tooltipPlacement]=\"'top'\"\n            [tooltipType]=\"'tooltip'\"\n            [tooltipTitle]=\"tooltipTemplate ? undefined : tooltipText({ data: series })\"\n            [tooltipTemplate]=\"tooltipTemplate\"\n            [tooltipContext]=\"series.data[0].data\"\n            (activate)=\"onActivate($event)\"\n            (deactivate)=\"onDeactivate($event)\"\n          />\n          <svg:text\n            *ngIf=\"animations\"\n            class=\"label percent-label\"\n            dy=\"-0.5em\"\n            x=\"0\"\n            y=\"5\"\n            ngx-charts-count-up\n            [countTo]=\"series.percent\"\n            [countSuffix]=\"'%'\"\n            text-anchor=\"middle\"\n          ></svg:text>\n\n          <svg:text *ngIf=\"!animations\" class=\"label percent-label\" dy=\"-0.5em\" x=\"0\" y=\"5\" text-anchor=\"middle\">\n            {{ series.percent.toLocaleString() }}\n          </svg:text>\n\n          <svg:text\n            *ngIf=\"animations\"\n            class=\"label\"\n            dy=\"0.5em\" x=\"0\" y=\"5\"\n            text-anchor=\"middle\"\n          >{{ convertToRupee(series.total) }}</svg:text>\n          <svg:text\n            *ngIf=\"!animations\"\n            class=\"label\"\n            dy=\"1.23em\"\n            x=\"0\"\n            [attr.y]=\"series.outerRadius\"\n            text-anchor=\"middle\"\n          >\n            {{ convertToRupee(series.total) }}\n          </svg:text>\n\n\n          <svg:foreignObject text-anchor=\"middle\" x=\"-80\" y=\"90\" dy=\"1.23em\" width=\"160\" height=\"50\">\n            <xhtml:p class=\"label-text\">{{ series.label }}</xhtml:p>\n          </svg:foreignObject>\n        </svg:g>\n      </svg:g>\n    </ngx-charts-chart>\n  ",
             styleUrls: ['../common/base-chart.component.css', './pie-grid.component.css'],
             encapsulation: ViewEncapsulation.None,
             changeDetection: ChangeDetectionStrategy.OnPush

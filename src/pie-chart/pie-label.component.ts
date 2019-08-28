@@ -17,7 +17,7 @@ import { trimLabel } from '../common/trim-label.helper';
         dy=".35em"
         [style.textAnchor]="textAnchor()"
         [style.shapeRendering]="'crispEdges'">
-        {{labelTrim ? trimLabel(label, labelTrimSize) : label}}
+        {{label}}
       </svg:text>
     </svg:g>
     <svg:path

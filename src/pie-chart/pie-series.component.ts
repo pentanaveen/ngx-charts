@@ -170,12 +170,12 @@ export class PieSeriesComponent implements OnChanges {
   }
 
   label(myArc): string {
-    return formatLabel(myArc.data.name);
+    return (myArc.data.name);
   }
 
   defaultTooltipText(myArc): string {
     const label = this.label(myArc);
-    const val = formatLabel(myArc.data.value);
+    const val = (myArc.data.value);
 
     return `
       <span class="tooltip-label">${escapeLabel(label)}</span>
